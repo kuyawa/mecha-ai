@@ -1,0 +1,118 @@
+{
+  "architecture": {},
+  "decisions": [],
+  "patterns": {},
+  "fileSummaries": {
+    "package.json": {
+      "summary": "Edited",
+      "lastAnalyzed": "2026-04-16T02:26:21.067Z",
+      "dependencies": []
+    },
+    "src/cli.js": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-16T02:27:06.106Z",
+      "dependencies": [
+        "commander",
+        "chalk",
+        "readline",
+        "./assistant.js",
+        "./tools/fileTools.js",
+        "./config.js"
+      ]
+    },
+    "src/module-index.js": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-16T02:27:29.577Z",
+      "dependencies": []
+    },
+    "build.js": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-16T02:28:01.813Z",
+      "dependencies": [
+        "fs/promises",
+        "path",
+        "url"
+      ]
+    },
+    "readme.md": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-16T02:29:04.278Z",
+      "dependencies": [
+        "mecha-ai",
+        "mecha-ai",
+        "mecha-ai",
+        "mecha-ai",
+        "mecha-ai"
+      ]
+    },
+    ".env.example": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-16T02:29:11.955Z",
+      "dependencies": []
+    },
+    "src/config.js": {
+      "summary": "Edited",
+      "lastAnalyzed": "2026-04-16T02:29:36.483Z",
+      "dependencies": [
+        "dotenv"
+      ]
+    },
+    "examples/basic-usage.js": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-16T02:29:58.330Z",
+      "dependencies": [
+        "../src/module-index.js"
+      ]
+    },
+    "examples/advanced-usage.js": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-16T02:30:30.394Z",
+      "dependencies": [
+        "../src/module-index.js"
+      ]
+    },
+    "test/module-test.js": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-16T02:31:01.628Z",
+      "dependencies": [
+        "../src/module-index.js"
+      ]
+    },
+    "src/test.js": {
+      "summary": "Edited",
+      "lastAnalyzed": "2026-04-16T02:31:25.150Z",
+      "dependencies": [
+        "./module-index.js",
+        "chalk",
+        "mecha-ai"
+      ]
+    },
+    "LICENSE": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-16T02:31:37.712Z",
+      "dependencies": []
+    },
+    ".gitignore": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-16T02:31:56.759Z",
+      "dependencies": []
+    },
+    "run-build.js": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-16T02:32:09.970Z",
+      "dependencies": [
+        "child_process",
+        "util"
+      ]
+    },
+    "verify-module.js": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-16T02:32:38.437Z",
+      "dependencies": [
+        "fs/promises",
+        "path"
+      ]
+    }
+  },
+  "lastUpdated": "2026-04-16T02:32:38.437Z"
+}

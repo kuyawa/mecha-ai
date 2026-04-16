@@ -1,0 +1,4 @@
+Mecha - AI coding assistant
+
+- in this folder there is an AI coding assistant that uses DeepSeek API
+- create an npm package named mecha-ai that can be used as an independent module

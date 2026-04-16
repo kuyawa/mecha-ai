@@ -1,0 +1,28 @@
+Mecha - AI coding assistant
+
+- Create an AI coding assistant that uses DeepSeek API
+- Use node js only
+- Use deepseek-swe as starting point
+- Try to mimic Claude Code functionality
+- Write tools for file manipulation
+- Transaction Support - Rollback any mistake
+- Chain-of-Thought Streaming - Watch AI reasoning in real-time
+- Fuzzy Matching Edits - Edits work even with minor differences
+- Planning Mode - Uses DeepThink to analyze before executing
+- Project Memory - Remembers file structures across sessions
+- Parallel Execution - 3-5x faster tool calls
+- Dry Run Mode - Preview changes before applying
+- Beautiful Diffs - Color-coded change previews
+- File Tree View - Visualize project structure
+
+It should also use the following commands:
+- /exit - Quit the assistant
+- /reset - Clear conversation history
+- /plan - Toggle planning mode (DeepThink first)
+- /memory - Show project memory
+- /preview - Preview pending changes (dry-run mode)
+- /apply - Apply pending changes
+- /discard - Discard pending changes
+- /add <file> - Add file to context
+- /tree - Show project file tree
+- /help - Show help
