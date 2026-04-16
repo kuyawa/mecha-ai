@@ -62,10 +62,22 @@ program
       console.log(chalk.gray('\nCommands: /exit, /reset, /plan, /preview, /apply, /tree, /help\n'));
       
       let usePlanning = options.plan;
+      
+      // Fix for character repetition issue
+      // Set raw mode to false and handle terminal properly
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
-        prompt: chalk.green('> ')
+        prompt: chalk.green('> '),
+        terminal: true,
+        historySize: 100
+      });
+
+      // Handle SIGINT properly
+      rl.on('SIGINT', () => {
+        console.log(chalk.yellow('\n\nGoodbye! 👋'));
+        rl.close();
+        process.exit(0);
       });
 
       rl.prompt();

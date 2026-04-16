@@ -103,7 +103,13 @@ async function build() {
   console.log('   - Main module: dist/index.js');
   console.log('   - CLI: dist/cli.js');
   console.log('   - Run: npm run build');
+  console.log('   - Then: npm publish');
 }
 
 // Run build
-build().catch(console.error);
+if (import.meta.url === `file://${process.argv[1]}`) {
+  build().catch(console.error);
+}
+
+// Export for programmatic use
+export { build };

@@ -1,0 +1,8 @@
+TODO:
+
+- move all ai scripts to ai folder
+- publish mecha-ai 1.0.1
+- FIX: /tree shows root tree not project tree
+
+x publish mecha-ai 1.0.0
+x fix interactive mode repeating typed chars in terminal

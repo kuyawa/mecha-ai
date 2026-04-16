@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 
-Mecha AI is a powerful AI coding assistant that uses the DeepSeek API to help you write, refactor, and understand code. It can read, edit, create files, search codebases, and execute complex coding tasks with planning and transaction support.
+Mecha AI is a powerful AI coding assistant that uses DeepSeek API to help you write, refactor, and understand code. It can read, edit, create files, search codebases, and execute complex coding tasks with planning and transaction support.
 
 ## Features
 

@@ -6,7 +6,8 @@ export class PlanExecutor {
     this.assistant = assistant;
     this.rl = readline.createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
+      terminal: true
     });
   }
 

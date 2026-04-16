@@ -1,0 +1,3 @@
+- project mecha ai
+- in interactive mode, once I start typing, the last character gets repeated, so instead of /help I see //hheellpp in the console
+- please fix that issue and rebuild the mecha-ai npm module

@@ -6,13 +6,14 @@ import readline from 'readline';
 import { DeepSeekAssistant } from './assistant.js';
 import { fileTools } from './tools/fileTools.js';
 import { config } from './config.js';
+import { PlanExecutor } from './planExecutor.js';
 
 const program = new Command();
 
 program
   .name('mecha')
   .description('Mecha AI - AI coding assistant')
-  .version('1.0.0');
+  .version('1.0.1');
 
 program
   .command('chat')
@@ -37,7 +38,6 @@ program
       // Single prompt mode
       if (options.dryRun) {
         // Use plan executor with dry run for better preview
-        const { PlanExecutor } = await import('./planExecutor.js');
         const planExec = new PlanExecutor(assistant);
         await planExec.planThenExecute(options.single, { 
           dryRun: true, 
@@ -54,10 +54,22 @@ program
       console.log(chalk.gray('\nCommands: /exit, /reset, /plan, /preview, /apply, /tree, /help\n'));
       
       let usePlanning = options.plan;
+      
+      // Fix for character repetition issue
+      // Set raw mode to false and handle terminal properly
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
-        prompt: chalk.green('> ')
+        prompt: chalk.green('> '),
+        terminal: false,
+        historySize: 100
+      });
+
+      // Handle SIGINT properly
+      rl.on('SIGINT', () => {
+        console.log(chalk.yellow('\n\nGoodbye! 👋'));
+        rl.close();
+        process.exit(0);
       });
 
       rl.prompt();
@@ -178,9 +190,8 @@ program
     config.features.enableStreaming = false; // Disable streaming for cleaner preview
     
     // Use planning with auto-preview
-    const { PlanExecutor } = await import('./planExecutor.js');
+    //const { PlanExecutor } = await import('./planExecutor.js');
     const planExec = new PlanExecutor(assistant);
-    
     await planExec.planThenExecute(prompt, { 
       dryRun: true,      // Don't make changes
       autoApprove: false  // Show plan but don't ask to execute
