@@ -8,15 +8,15 @@ Mecha AI is a powerful AI coding assistant that uses the DeepSeek API to help yo
 
 ## Features
 
-- ** AI-Powered Coding**: Uses DeepSeek API for intelligent code generation and analysis
-- ** File Operations**: Read, write, edit, and search files in your project
-- ** Tool System**: Extensible tool system for file operations and project management
-- ** Planning Mode**: AI creates execution plans before making changes
-- ** Transaction Support**: Rollback changes if something goes wrong
-- ** Interactive CLI**: Chat interface with commands and previews
-- ** Streaming Responses**: Real-time AI responses with progress indicators
-- ** Project Memory**: Remembers file changes and project context
-- ** Diff Previews**: See exactly what will change before applying
+- **AI-Powered Coding**: Uses DeepSeek API for intelligent code generation and analysis
+- **File Operations**: Read, write, edit, and search files in your project
+- **Tool System**: Extensible tool system for file operations and project management
+- **Planning Mode**: AI creates execution plans before making changes
+- **Transaction Support**: Rollback changes if something goes wrong
+- **Interactive CLI**: Chat interface with commands and previews
+- **Streaming Responses**: Real-time AI responses with progress indicators
+- **Project Memory**: Remembers file changes and project context
+- **Diff Previews**: See exactly what will change before applying
 
 ## Installation
 
