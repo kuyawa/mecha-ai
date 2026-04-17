@@ -9,11 +9,12 @@ export class ProjectMemory {
     this.load();
   }
 
-  load() {
+  async load() {
     try {
-      const content = fs.readFileSync(this.memoryFile, 'utf-8');
+      const content = await fs.readFile(this.memoryFile, 'utf-8');
       this.data = JSON.parse(content);
-    } catch {
+    } catch (error) {
+      console.error(`Error loading memory file: ${error.message}`);
       this.data = {
         architecture: {},
         decisions: [],

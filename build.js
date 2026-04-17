@@ -60,7 +60,14 @@ async function build() {
   }
   
   // Create package.json for dist
-  const packageJson = JSON.parse(await fs.readFile('package.json', 'utf8'));
+  let packageJson;
+  try {
+    const packageJsonContent = await fs.readFile('package.json', 'utf8');
+    packageJson = JSON.parse(packageJsonContent);
+  } catch (error) {
+    console.error(`✗ Error parsing package.json: ${error.message}`);
+    process.exit(1);
+  }
   const distPackageJson = {
     name: packageJson.name,
     version: packageJson.version,

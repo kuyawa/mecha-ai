@@ -27,9 +27,67 @@ export class DeepSeekAssistant {
     this.pendingChanges = new Map();
   }
 
+  // Helper method to safely parse JSON with error recovery
+  safeJsonParse(jsonString, defaultValue = {}) {
+    if (typeof jsonString !== 'string') {
+      return defaultValue;
+    }
+    
+    try {
+      return JSON.parse(jsonString);
+    } catch (error) {
+      // Try to fix common JSON issues
+      let fixed = jsonString.trim();
+      
+      // Fix 1: Add missing closing braces/brackets
+      const openBraces = (fixed.match(/{/g) || []).length;
+      const closeBraces = (fixed.match(/}/g) || []).length;
+      const openBrackets = (fixed.match(/\[/g) || []).length;
+      const closeBrackets = (fixed.match(/\]/g) || []).length;
+      
+      if (openBraces > closeBraces) {
+        fixed += '}'.repeat(openBraces - closeBraces);
+      }
+      
+      if (openBrackets > closeBrackets) {
+        fixed += ']'.repeat(openBrackets - closeBrackets);
+      }
+      
+      // Fix 2: Add missing quotes around property names
+      if (fixed.startsWith('{')) {
+        // Match property names without quotes: {property: value}
+        fixed = fixed.replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)(\s*:)/g, '$1"$2"$3');
+      }
+      
+      // Fix 3: Handle trailing commas
+      fixed = fixed.replace(/,\s*([}\]])/g, '$1');
+      
+      try {
+        return JSON.parse(fixed);
+      } catch {
+        // If still fails, return defaultValue
+        console.log(chalk.yellow(`   ⚠️ Could not parse JSON, using default: ${error.message}`));
+        return defaultValue;
+      }
+    }
+  }
+
   async executeToolCall(toolCall, dryRun = false) {
     const { name, arguments: args } = toolCall.function;
-    const parsedArgs = JSON.parse(args);
+    
+    // Use safe JSON parsing with error recovery
+    const parsedArgs = this.safeJsonParse(args, null);
+    
+    if (parsedArgs === null) {
+      console.log(chalk.red(`   ❌ JSON Parse Error for tool: ${name}`));
+      console.log(chalk.gray(`   Raw arguments: ${args ? args.substring(0, 200) : 'undefined'}...`));
+      
+      return {
+        tool_call_id: toolCall.id,
+        role: 'tool',
+        content: `Error: Failed to parse JSON arguments for tool "${name}". Please check the arguments format.`,
+      };
+    }
     
     console.log(chalk.blue(`\n🔧 Executing: ${name}`));
     console.log(chalk.gray(`   Arguments: ${JSON.stringify(parsedArgs, null, 2)}`));
@@ -228,8 +286,27 @@ export class DeepSeekAssistant {
       if (message.tool_calls && message.tool_calls.length > 0) {
         spinner.stop();
         console.log(chalk.blue(`\n🔨 Executing ${message.tool_calls.length} tool calls...`));
-        const toolResults = await this.executeToolCallsParallel(message.tool_calls, dryRun);
-        this.messages.push(...toolResults);
+        
+        // Validate tool calls before execution
+        const validToolCalls = [];
+        for (const toolCall of message.tool_calls) {
+          if (toolCall.function && toolCall.function.arguments) {
+            // Quick validation: check if arguments look like JSON
+            const args = toolCall.function.arguments.trim();
+            if (args.startsWith('{') || args.startsWith('[')) {
+              validToolCalls.push(toolCall);
+            } else {
+              console.log(chalk.yellow(`   ⚠️ Skipping tool call with invalid arguments: ${args.substring(0, 100)}...`));
+            }
+          }
+        }
+        
+        if (validToolCalls.length > 0) {
+          const toolResults = await this.executeToolCallsParallel(validToolCalls, dryRun);
+          this.messages.push(...toolResults);
+        } else {
+          console.log(chalk.yellow('   ⚠️ No valid tool calls to execute'));
+        }
         spinner.start();
         continue;
       }
@@ -298,8 +375,27 @@ export class DeepSeekAssistant {
       
       if (fullMessage.tool_calls && fullMessage.tool_calls.length > 0) {
         console.log(chalk.blue(`\n🔨 Executing ${fullMessage.tool_calls.length} tool calls...`));
-        const toolResults = await this.executeToolCallsParallel(fullMessage.tool_calls, dryRun);
-        this.messages.push(...toolResults);
+        
+        // Validate tool calls before execution
+        const validToolCalls = [];
+        for (const toolCall of fullMessage.tool_calls) {
+          if (toolCall.function && toolCall.function.arguments) {
+            // Quick validation: check if arguments look like JSON
+            const args = toolCall.function.arguments.trim();
+            if (args.startsWith('{') || args.startsWith('[')) {
+              validToolCalls.push(toolCall);
+            } else {
+              console.log(chalk.yellow(`   ⚠️ Skipping tool call with invalid arguments: ${args.substring(0, 100)}...`));
+            }
+          }
+        }
+        
+        if (validToolCalls.length > 0) {
+          const toolResults = await this.executeToolCallsParallel(validToolCalls, dryRun);
+          this.messages.push(...toolResults);
+        } else {
+          console.log(chalk.yellow('   ⚠️ No valid tool calls to execute'));
+        }
         continue;
       }
       

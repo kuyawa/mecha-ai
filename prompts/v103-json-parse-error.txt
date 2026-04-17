@@ -1,0 +1,5 @@
+mecha-ai module
+
+- on running 'mecha chat' some iterations give me an error: SyntaxError: Unterminated string in JSON at position at JSON.parse in file assistant.js line 32
+- add a try catch when parsing json and any other fix to avoid that error
+- please fix that issue and rebuild the mecha-ai npm module

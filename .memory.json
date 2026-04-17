@@ -3,11 +3,90 @@
   "decisions": [],
   "patterns": {},
   "fileSummaries": {
-    "utils.js": {
+    "src/assistant.js": {
+      "summary": "Edited",
+      "lastAnalyzed": "2026-04-17T04:29:50.003Z",
+      "dependencies": [
+        "openai",
+        "./config.js",
+        "./tools/index.js",
+        "./tools/fileTools.js",
+        "./tools/contextManager.js",
+        "./tools/projectMemory.js",
+        "./planExecutor.js",
+        "./tools/diffRenderer.js",
+        "./streamingHandler.js",
+        "chalk",
+        "ora"
+      ]
+    },
+    "src/tools/projectMemory.js": {
+      "summary": "Edited",
+      "lastAnalyzed": "2026-04-17T04:28:01.366Z",
+      "dependencies": [
+        "fs/promises",
+        "path"
+      ]
+    },
+    "build.js": {
+      "summary": "Edited",
+      "lastAnalyzed": "2026-04-17T04:28:09.699Z",
+      "dependencies": [
+        "fs/promises",
+        "path",
+        "url"
+      ]
+    },
+    "ai/verify-module.js": {
+      "summary": "Edited",
+      "lastAnalyzed": "2026-04-17T04:28:20.857Z",
+      "dependencies": [
+        "fs/promises",
+        "path"
+      ]
+    },
+    "ai/run-build.js": {
       "summary": "Created",
-      "lastAnalyzed": "2026-04-16T15:09:59.798Z",
+      "lastAnalyzed": "2026-04-17T04:30:00.124Z",
+      "dependencies": [
+        "../build.js"
+      ]
+    },
+    "ai/fix-and-build.sh": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-17T04:30:09.193Z",
       "dependencies": []
+    },
+    "ai/execute-build.js": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-17T04:30:24.143Z",
+      "dependencies": [
+        "child_process",
+        "util"
+      ]
+    },
+    "ai/test-json-fix.js": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-17T04:30:43.222Z",
+      "dependencies": [
+        "../src/assistant.js"
+      ]
+    },
+    "ai/final-build.js": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-17T04:31:04.900Z",
+      "dependencies": [
+        "../build.js"
+      ]
+    },
+    "ai/apply-fix.js": {
+      "summary": "Created",
+      "lastAnalyzed": "2026-04-17T04:31:25.276Z",
+      "dependencies": [
+        "fs/promises",
+        "path"
+      ]
     }
   },
-  "lastUpdated": "2026-04-16T15:09:59.799Z"
+  "lastUpdated": "2026-04-17T04:31:25.277Z"
 }
