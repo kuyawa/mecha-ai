@@ -1,6 +1,6 @@
 {
   "name": "mecha-ai",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "description": "Mecha AI - AI coding assistant using DeepSeek API",
   "main": "dist/index.js",
