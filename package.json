@@ -1,6 +1,6 @@
 {
   "name": "mecha-ai",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Mecha AI - AI coding assistant using DeepSeek API",
   "main": "dist/index.js",
@@ -21,7 +21,13 @@
     "build": "node build.js",
     "prepare": "npm run build"
   },
-  "keywords": ["ai", "deepseek", "coding-assistant", "automation", "code-generation"],
+  "keywords": [
+    "ai",
+    "deepseek",
+    "coding-assistant",
+    "automation",
+    "code-generation"
+  ],
   "author": "deepseek + kuyawa",
   "license": "MIT",
   "dependencies": {
