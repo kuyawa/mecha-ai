@@ -1,6 +1,9 @@
 TODO:
 
-- publish mecha-ai 1.0.4
+- publish mecha-ai 1.0.5
+- set mecha version from package json not hardcoded
+
+x publish mecha-ai 1.0.4
 x FIX: /tree shows root tree not project tree
 
 x publish mecha-ai 1.0.3

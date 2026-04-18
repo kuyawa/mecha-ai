@@ -7,13 +7,14 @@ import { DeepSeekAssistant } from './assistant.js';
 import { fileTools } from './tools/fileTools.js';
 import { config } from './config.js';
 import { PlanExecutor } from './planExecutor.js';
+import packinfo from '../package.json' with { type: 'json' };
 
 const program = new Command();
 
 program
   .name('mecha')
   .description('Mecha AI - AI coding assistant')
-  .version('1.0.3');
+  .version(packinfo.version);
 
 program
   .command('chat')
