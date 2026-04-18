@@ -137,7 +137,7 @@ export const fileTools = {
     const files = await glob(`${directory}/**/*`, {
       ignore,
       nodir: true,
-      absolute: true,
+      absolute: false,
     });
     return files;
   },

@@ -13,7 +13,7 @@ const program = new Command();
 program
   .name('mecha')
   .description('Mecha AI - AI coding assistant')
-  .version('1.0.1');
+  .version('1.0.3');
 
 program
   .command('chat')
@@ -116,7 +116,8 @@ program
         }
         
         if (trimmed === '/tree') {
-          const files = await fileTools.listFiles('.');
+          const folder = process.cwd();
+          const files = await fileTools.listFiles(folder);
           const { DiffRenderer } = await import('./tools/diffRenderer.js');
           const renderer = new DiffRenderer();
           console.log(renderer.renderFileTree(files));

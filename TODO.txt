@@ -1,11 +1,13 @@
 TODO:
 
-- fix json.parse error on mecha chat iteration
+- publish mecha-ai 1.0.4
+x FIX: /tree shows root tree not project tree
 
-- FIX: /tree shows root tree not project tree
+x publish mecha-ai 1.0.3
+x fix json.parse error on mecha chat iteration
 
+x publish mecha-ai 1.0.1
 x move all ai scripts to ai folder
-- publish mecha-ai 1.0.1
 
 x publish mecha-ai 1.0.0
 x fix interactive mode repeating typed chars in terminal

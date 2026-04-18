@@ -17,7 +17,7 @@ export const config = {
   },
   fileOps: {
     maxFileSize: 5 * 1024 * 1024, // 5MB
-    excludedDirs: ['node_modules', '.git', 'dist', 'build', 'coverage', '.backups', 'prompts'],
+    excludedDirs: ['node_modules', '.backups', '.git', 'ai', 'dist', 'build', 'coverage', 'prompts', 'work'],
     maxTokensPerFile: 8000,
   },
   features: {
