@@ -272,11 +272,10 @@ mecha-ai/
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
 1. Fork the repository
 2. Do whatever you want with the code
-3. Don't ask for pull requests, I'm busy building cool stuff
+3. ???
+4. Profit!
 
 ## License
 
@@ -284,8 +283,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-- Issues: [GitHub Issues](https://github.com/yourusername/mecha-ai/issues)
-- Documentation: [GitHub Wiki](https://github.com/yourusername/mecha-ai/wiki)
+- Issues: [GitHub Issues](https://github.com/kuyawa/mecha-ai/issues)
 
 ## Acknowledgments
 
