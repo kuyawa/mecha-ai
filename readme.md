@@ -56,7 +56,10 @@ mecha transaction "Update all API endpoints"
 mecha preview "Add documentation to all functions"
 
 # Prompt file mode
-mecha chat -s "Read prompt.txt file and execute the guidelines"
+mecha chat -s "Read prompt.txt file and follow instructions"
+
+# Same as...
+mecha exec prompt.txt
 ```
 
 ### Module Usage:

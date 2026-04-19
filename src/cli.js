@@ -17,6 +17,38 @@ program
   .version(packinfo.version);
 
 program
+  .command('exec')
+  .description('Read prompt file and follow instructions')
+  .argument('<filename>', 'File name to read, include folder and extension')
+  .option('-p, --plan', 'Use planning mode', false)
+  .option('--dry-run', 'Preview changes without applying', false)
+  .option('--no-streaming', 'Disable streaming', false)
+  .action(async (filename, options) => {
+
+    const prompt = `Read file ${filename} and follow instructions`;
+    const assistant = new DeepSeekAssistant();
+
+    if (options.noStreaming) {
+      config.features.enableStreaming = false;
+    }
+
+    if (options.dryRun) {
+      config.features.dryRun = true;
+      console.log(chalk.yellow('⚠️  DRY RUN MODE\n'));
+      const planExec = new PlanExecutor(assistant);
+      await planExec.planThenExecute(prompt, { 
+        dryRun: true, 
+        autoApprove: false 
+      });
+    } else {
+      await assistant.chat(prompt, {
+        usePlanning: options.plan,
+        dryRun: options.dryRun
+      });
+    }
+  });
+
+program
   .command('chat')
   .description('Start interactive chat session')
   .option('-s, --single <prompt>', 'Single prompt mode')
@@ -192,7 +224,6 @@ program
     config.features.enableStreaming = false; // Disable streaming for cleaner preview
     
     // Use planning with auto-preview
-    //const { PlanExecutor } = await import('./planExecutor.js');
     const planExec = new PlanExecutor(assistant);
     await planExec.planThenExecute(prompt, { 
       dryRun: true,      // Don't make changes
