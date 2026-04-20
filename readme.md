@@ -16,13 +16,20 @@ Just open terminal and then...
 # start a new project
 mkdir myapp
 cd myapp
+
 # use your DeepSeek API key or get one here https://platform.deepseek.com
 echo 'DEEPSEEK_API_KEY=your_api_key_here' > .env
+
+# install Mecha AI
 npm install -g mecha-ai
+
 # it can generate code in more than 100 programming languages
 mecha chat -s "Create a function in node js to calculate fibonacci numbers"
-# or use a prompt file
-mecha exec prompt.txt # where prompt.txt is the file with instructions to follow
+
+# or use a prompt file, where prompt.txt is the file with instructions to follow
+# it can be .md if you want, I like simplicity
+mecha exec prompt.txt
+
 # remember to ctrl-c when done
 ```
 
