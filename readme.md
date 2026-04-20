@@ -8,6 +8,26 @@
 
 Mecha AI is a powerful AI coding assistant that uses DeepSeek API to help you write, refactor, and understand code. It can read, edit, create files, search codebases, and execute complex coding tasks with planning and transaction support.
 
+## Quick Intro for Power Users
+
+Just open terminal and then...
+
+```bash
+# start a new project
+mkdir myapp
+cd myapp
+# use your DeepSeek API key or get one here https://platform.deepseek.com
+echo 'DEEPSEEK_API_KEY=your_api_key_here' > .env
+npm install -g mecha-ai
+# it can generate code in more than 100 programming languages
+mecha chat -s "Create a function in node js to calculate fibonacci numbers"
+# or use a prompt file
+mecha exec prompt.txt # where prompt.txt is the file with instructions to follow
+# remember to ctrl-c when done
+```
+
+All of that for less than one cent!
+
 ## Features
 
 - **AI-Powered Coding**: Uses DeepSeek API for intelligent code generation and analysis
@@ -287,7 +307,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Built with [DeepSeek API](https://platform.deepseek.com/)
+- Built with [DeepSeek API](https://platform.deepseek.com/) for just 10 cts
 - Inspired by various AI coding assistants
 - Thanks to all contributors and users!
 
