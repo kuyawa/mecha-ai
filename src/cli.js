@@ -83,7 +83,7 @@ program
         });
       }
     } else {
-      console.log(chalk.cyan('\n🤖 Mecha AI v1.0'));
+      console.log(chalk.cyan('\n🤖 Mecha AI v'+packinfo.version));
       console.log(chalk.gray('\nCommands: /exit, /reset, /plan, /preview, /apply, /tree, /help\n'));
       
       let usePlanning = options.plan;

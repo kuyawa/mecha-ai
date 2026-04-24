@@ -25,6 +25,7 @@ export class DeepSeekAssistant {
     this.diffRenderer = new DiffRenderer();
     this.streamingHandler = new StreamingHandler();
     this.pendingChanges = new Map();
+    this.thinkingMode = config.deepseek.thinkingMode || 'adaptive'; // 'adaptive', 'enabled', 'disabled'
   }
 
   // Helper method to safely parse JSON with error recovery
@@ -70,6 +71,51 @@ export class DeepSeekAssistant {
         return defaultValue;
       }
     }
+  }
+
+  // NEW: Helper to preserve reasoning_content for V4 thinking mode
+  preserveReasoningContent(message) {
+    if (!message.reasoning_content) return message;
+    
+    return {
+      ...message,
+      reasoning_content: message.reasoning_content
+    };
+  }
+
+  // NEW: Prepare messages for V4 API with proper reasoning_content handling
+  prepareMessagesForV4(messages) {
+    const preparedMessages = [];
+    
+    for (let i = 0; i < messages.length; i++) {
+      const msg = messages[i];
+      
+      // For assistant messages that had tool calls, ensure reasoning_content is preserved
+      if (msg.role === 'assistant' && msg.tool_calls && msg.tool_calls.length > 0) {
+        // Check if there's a corresponding tool response in the next message
+        const nextMsg = messages[i + 1];
+        if (nextMsg && nextMsg.role === 'tool') {
+          // This assistant message had tool calls and there are tool responses
+          // We MUST preserve reasoning_content for V4 thinking mode
+          preparedMessages.push(this.preserveReasoningContent(msg));
+        } else {
+          // Assistant message without subsequent tool response - reasoning_content optional
+          preparedMessages.push(msg);
+        }
+      } 
+      // For regular assistant messages (no tool calls)
+      else if (msg.role === 'assistant') {
+        // In thinking mode, we can optionally preserve reasoning_content
+        // but it's not required unless there were tool calls
+        preparedMessages.push(msg);
+      }
+      // For user messages and tool responses - pass through as-is
+      else {
+        preparedMessages.push(msg);
+      }
+    }
+    
+    return preparedMessages;
   }
 
   async executeToolCall(toolCall, dryRun = false) {
@@ -227,6 +273,28 @@ export class DeepSeekAssistant {
     return Array.from(files);
   }
 
+  // UPDATED: Generate request options for V4 API
+  getV4RequestOptions(messages) {
+    const baseOptions = {
+      model: config.deepseek.model, // Should be 'deepseek-v4-flash' or 'deepseek-v4-pro'
+      messages: this.prepareMessagesForV4(messages),
+      tools: this.toolDefinitions,
+      tool_choice: 'auto',
+    };
+    
+    // Add thinking mode configuration for V4
+    if (this.thinkingMode === 'enabled') {
+      baseOptions.thinking = { type: 'enabled' };
+    } else if (this.thinkingMode === 'disabled') {
+      baseOptions.thinking = { type: 'disabled' };
+    } else {
+      // 'adaptive' - let the API decide based on the task
+      baseOptions.thinking = { type: 'adaptive' };
+    }
+    
+    return baseOptions;
+  }
+
   async chat(userPrompt, options = {}) {
     const { usePlanning = false, dryRun = false, autoReadFiles = true } = options;
     
@@ -273,15 +341,26 @@ export class DeepSeekAssistant {
         spinner.start();
       }
       
-      const response = await this.client.chat.completions.create({
-        model: config.deepseek.model,
-        messages: this.messages,
-        tools: this.toolDefinitions,
-        tool_choice: 'auto',
-      });
+      // UPDATED: Use V4 request options
+      const request = this.getV4RequestOptions(this.messages)
+      const response = await this.client.chat.completions.create(request);
       
       const message = response.choices[0].message;
-      this.messages.push(message);
+      
+      // UPDATED: Store reasoning_content if present (critical for V4 thinking mode)
+      const assistantMessage = {
+        role: 'assistant',
+        content: message.content,
+        tool_calls: message.tool_calls
+      };
+      
+      // Preserve reasoning_content for V4
+      if (message.reasoning_content) {
+        assistantMessage.reasoning_content = message.reasoning_content;
+        console.log(chalk.gray(`   💭 Reasoning: ${message.reasoning_content.substring(0, 100)}...`));
+      }
+      
+      this.messages.push(assistantMessage);
       
       if (message.tool_calls && message.tool_calls.length > 0) {
         spinner.stop();
@@ -320,11 +399,11 @@ export class DeepSeekAssistant {
     throw new Error('Max iterations reached');
   }
 
+  // UPDATED: Streaming for V4 with reasoning_content handling
   async chatWithStreaming(options = {}) {
     const { dryRun = false } = options;
     
     let iteration = 0;
-    //const maxIterations = 15; <<<<<< cambiar a 1000
     const maxIterations = 1000;
     
     while (iteration < maxIterations) {
@@ -333,21 +412,29 @@ export class DeepSeekAssistant {
       
       this.streamingHandler.clear();
       
+      // UPDATED: Use V4 request options with streaming
       const stream = await this.client.chat.completions.create({
-        model: config.deepseek.model,
-        messages: this.messages,
-        tools: this.toolDefinitions,
-        tool_choice: 'auto',
+        ...this.getV4RequestOptions(this.messages),
         stream: true,
       });
       
-      let fullMessage = { role: 'assistant', content: '', tool_calls: [] };
+      let fullMessage = { 
+        role: 'assistant', 
+        content: '', 
+        tool_calls: [],
+        reasoning_content: '' // NEW: for V4 thinking mode
+      };
       
       for await (const chunk of stream) {
         this.streamingHandler.handleStreamChunk(chunk);
         
         if (chunk.choices[0]?.delta?.content) {
           fullMessage.content += chunk.choices[0].delta.content;
+        }
+        
+        // NEW: Capture reasoning_content from V4 streaming
+        if (chunk.choices[0]?.delta?.reasoning_content) {
+          fullMessage.reasoning_content += chunk.choices[0].delta.reasoning_content;
         }
         
         if (chunk.choices[0]?.delta?.tool_calls) {
@@ -371,6 +458,19 @@ export class DeepSeekAssistant {
       }
       
       this.streamingHandler.flush();
+      
+      // Remove empty reasoning_content if not present
+      if (!fullMessage.reasoning_content) {
+        delete fullMessage.reasoning_content;
+      } else {
+        console.log(chalk.gray(`   💭 Reasoning: ${fullMessage.reasoning_content.substring(0, 100)}...`));
+      }
+      
+      // Remove tool_calls array if empty
+      if (fullMessage.tool_calls.length === 0) {
+        delete fullMessage.tool_calls;
+      }
+      
       this.messages.push(fullMessage);
       
       if (fullMessage.tool_calls && fullMessage.tool_calls.length > 0) {

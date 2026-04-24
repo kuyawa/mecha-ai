@@ -1,7 +1,10 @@
 TODO:
 
-- publish mecha-ai 1.0.6
-- Added mecha exec filename to read prompt file
+- publish mecha-ai 1.0.7
+- Upgrade to deepseek v4
+
+x publish mecha-ai 1.0.6
+x Added mecha exec filename to read prompt file
 
 x publish mecha-ai 1.0.5
 x set mecha version from package json not hardcoded
