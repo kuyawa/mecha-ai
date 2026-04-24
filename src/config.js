@@ -13,7 +13,7 @@ export const config = {
   deepseek: {
     apiKey: process.env.DEEPSEEK_API_KEY || process.env.MECHA_API_KEY,
     baseURL: process.env.DEEPSEEK_BASE_URL || process.env.MECHA_BASE_URL || 'https://api.deepseek.com',
-    model: process.env.DEEPSEEK_MODEL || process.env.MECHA_MODEL || 'deepseek-chat',
+    model: process.env.DEEPSEEK_MODEL || process.env.MECHA_MODEL || 'deepseek-v4-flash',
   },
   fileOps: {
     maxFileSize: 5 * 1024 * 1024, // 5MB

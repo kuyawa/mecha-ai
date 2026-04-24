@@ -121,7 +121,7 @@ Create a `.env` file in your project:
 ```env
 DEEPSEEK_API_KEY=your_api_key_here
 DEEPSEEK_BASE_URL=https://api.deepseek.com  # Optional
-DEEPSEEK_MODEL=deepseek-chat                # Optional
+DEEPSEEK_MODEL=deepseek-v4-flash            # Optional
 ```
 
 Or configure programmatically:
@@ -149,7 +149,7 @@ const mecha = new MechaAI(options);
 **Options:**
 - `apiKey`: DeepSeek API key
 - `baseURL`: API base URL (default: https://api.deepseek.com)
-- `model`: Model to use (default: deepseek-chat)
+- `model`: Model to use (default: deepseek-v4-flash)
 - `enablePlanning`: Enable planning mode (default: true)
 - `enableStreaming`: Enable streaming responses (default: true)
 - `enableMemory`: Enable project memory (default: true)
