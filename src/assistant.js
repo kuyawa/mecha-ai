@@ -73,41 +73,25 @@ export class DeepSeekAssistant {
     }
   }
 
-  // NEW: Helper to preserve reasoning_content for V4 thinking mode
+  // FIXED: Ensure reasoning_content is always preserved on all assistant messages
+  // DeepSeek V4 requires reasoning_content to be passed back exactly as returned
   preserveReasoningContent(message) {
     if (!message.reasoning_content) return message;
-    
-    return {
-      ...message,
-      reasoning_content: message.reasoning_content
-    };
+    return message;
   }
 
-  // NEW: Prepare messages for V4 API with proper reasoning_content handling
+  // FIXED: Simplify to unconditionally preserve reasoning_content on ALL assistant messages
+  // DeepSeek V4 API requires reasoning_content to be preserved in conversation history
   prepareMessagesForV4(messages) {
     const preparedMessages = [];
     
     for (let i = 0; i < messages.length; i++) {
       const msg = messages[i];
       
-      // For assistant messages that had tool calls, ensure reasoning_content is preserved
-      if (msg.role === 'assistant' && msg.tool_calls && msg.tool_calls.length > 0) {
-        // Check if there's a corresponding tool response in the next message
-        const nextMsg = messages[i + 1];
-        if (nextMsg && nextMsg.role === 'tool') {
-          // This assistant message had tool calls and there are tool responses
-          // We MUST preserve reasoning_content for V4 thinking mode
-          preparedMessages.push(this.preserveReasoningContent(msg));
-        } else {
-          // Assistant message without subsequent tool response - reasoning_content optional
-          preparedMessages.push(msg);
-        }
-      } 
-      // For regular assistant messages (no tool calls)
-      else if (msg.role === 'assistant') {
-        // In thinking mode, we can optionally preserve reasoning_content
-        // but it's not required unless there were tool calls
-        preparedMessages.push(msg);
+      // For assistant messages: ALWAYS preserve reasoning_content if present
+      // DeepSeek V4 requires this for any assistant message that had thinking mode active
+      if (msg.role === 'assistant') {
+        preparedMessages.push(this.preserveReasoningContent(msg));
       }
       // For user messages and tool responses - pass through as-is
       else {
@@ -273,30 +257,48 @@ export class DeepSeekAssistant {
     return Array.from(files);
   }
 
-  // UPDATED: Generate request options for V4 API
+  // FIXED: Generate request options for V4 API with proper thinking mode handling
+  // Only send thinking parameter when the mode is explicitly enabled or disabled
+  // For 'adaptive' mode, we omit it to let the model decide, which avoids issues
+  // with reasoning_content preservation requirements
   getV4RequestOptions(messages) {
+    const preparedMessages = this.prepareMessagesForV4(messages);
+    
+    // Check if any messages already have reasoning_content
+    const hasReasoningContent = preparedMessages.some(
+      m => m.role === 'assistant' && m.reasoning_content
+    );
+    
     const baseOptions = {
-      model: config.deepseek.model, // Should be 'deepseek-v4-flash' or 'deepseek-v4-pro'
-      messages: this.prepareMessagesForV4(messages),
+      model: config.deepseek.model,
+      messages: preparedMessages,
       tools: this.toolDefinitions,
       tool_choice: 'auto',
     };
     
     // Add thinking mode configuration for V4
-    if (this.thinkingMode === 'enabled') {
+    // If messages already have reasoning_content, we must be consistent
+    if (hasReasoningContent) {
+      // Conversation already has reasoning content - keep thinking enabled
+      baseOptions.thinking = { type: 'enabled' };
+    } else if (this.thinkingMode === 'enabled') {
       baseOptions.thinking = { type: 'enabled' };
     } else if (this.thinkingMode === 'disabled') {
       baseOptions.thinking = { type: 'disabled' };
-    } else {
-      // 'adaptive' - let the API decide based on the task
-      baseOptions.thinking = { type: 'adaptive' };
     }
+    // For 'adaptive' without existing reasoning content, omit thinking parameter
+    // to let the API use its default behavior
     
     return baseOptions;
   }
 
   async chat(userPrompt, options = {}) {
-    const { usePlanning = false, dryRun = false, autoReadFiles = true } = options;
+    const { usePlanning = false, dryRun = false, autoReadFiles = true, thinkingMode } = options;
+    
+    // Allow overriding thinking mode per request
+    if (thinkingMode) {
+      this.thinkingMode = thinkingMode;
+    }
     
     if (usePlanning && this.planExecutor && config.features.enablePlanning) {
       return await this.planExecutor.planThenExecute(userPrompt);
@@ -341,20 +343,22 @@ export class DeepSeekAssistant {
         spinner.start();
       }
       
-      // UPDATED: Use V4 request options
-      const request = this.getV4RequestOptions(this.messages)
+      // FIXED: Use V4 request options with proper thinking handling
+      const request = this.getV4RequestOptions(this.messages);
       const response = await this.client.chat.completions.create(request);
       
       const message = response.choices[0].message;
       
-      // UPDATED: Store reasoning_content if present (critical for V4 thinking mode)
+      // FIXED: Always capture ALL properties from the API response message
+      // DeepSeek V4 may return reasoning_content even with tool_calls
       const assistantMessage = {
         role: 'assistant',
         content: message.content,
-        tool_calls: message.tool_calls
+        tool_calls: message.tool_calls,
       };
       
-      // Preserve reasoning_content for V4
+      // CRITICAL: Preserve reasoning_content for V4 thinking mode
+      // DeepSeek V4 requires reasoning_content to be passed back exactly as returned
       if (message.reasoning_content) {
         assistantMessage.reasoning_content = message.reasoning_content;
         console.log(chalk.gray(`   💭 Reasoning: ${message.reasoning_content.substring(0, 100)}...`));

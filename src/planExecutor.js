@@ -19,23 +19,15 @@ export class PlanExecutor {
     });
   }
 
-  // NEW: Prepare messages for V4 API with reasoning_content preservation
+  // FIXED: Prepare messages for V4 API - preserve reasoning_content on ALL assistant messages
   preparePlanningMessages(messages) {
     const preparedMessages = [];
     
     for (let i = 0; i < messages.length; i++) {
       const msg = messages[i];
       
-      if (msg.role === 'assistant' && msg.tool_calls && msg.tool_calls.length > 0) {
-        // This assistant message had tool calls - PRESERVE reasoning_content for V4
-        const preservedMsg = { ...msg };
-        if (msg.reasoning_content) {
-          preservedMsg.reasoning_content = msg.reasoning_content;
-        }
-        preparedMessages.push(preservedMsg);
-      } 
-      else if (msg.role === 'assistant') {
-        // Regular assistant message - pass as-is
+      // DeepSeek V4 requires reasoning_content to be preserved on ALL assistant messages
+      if (msg.role === 'assistant') {
         preparedMessages.push(msg);
       }
       else {
@@ -218,18 +210,14 @@ ${planContent}
 
 Proceed step by step. Use the available tools (read_file, edit_file, create_file, search_files) to implement the changes.`;
     
-    // UPDATED: Add execution message with proper context for V4
-    const executionMessage = { 
-      role: 'user', 
-      content: executionPrompt 
-    };
-    
-    this.assistant.messages.push(executionMessage);
+    // FIXED: Don't push execution message separately - chat() does this internally
+    // The assistant.chat() method will push the userPrompt to messages
     
     // UPDATED: Execute with V4-aware chat method
     // The assistant's chat method already handles V4 reasoning_content preservation
     const result = await this.assistant.chat(executionPrompt, { 
       usePlanning: false,
+      autoReadFiles: false, // Don't auto-read files since we already have context
       // Ensure V4 thinking mode is respected
       thinkingMode: this.assistant.thinkingMode || 'adaptive'
     });

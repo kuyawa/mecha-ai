@@ -5,7 +5,7 @@
   "fileSummaries": {
     "src/assistant.js": {
       "summary": "Edited",
-      "lastAnalyzed": "2026-04-17T04:29:50.003Z",
+      "lastAnalyzed": "2026-05-01T03:03:59.611Z",
       "dependencies": [
         "openai",
         "./config.js",
@@ -91,7 +91,15 @@
       "summary": "Created",
       "lastAnalyzed": "2026-04-24T16:45:46.141Z",
       "dependencies": []
+    },
+    "src/planExecutor.js": {
+      "summary": "Edited",
+      "lastAnalyzed": "2026-05-01T03:04:16.687Z",
+      "dependencies": [
+        "chalk",
+        "readline"
+      ]
     }
   },
-  "lastUpdated": "2026-04-24T16:45:46.143Z"
+  "lastUpdated": "2026-05-01T03:04:16.688Z"
 }
